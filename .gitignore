@@ -1,0 +1,8 @@
+*.xls
+.ipynb_checkpoints
+*.ipynb
+*.spec
+*.log
+.jovianrc
+build
+dist
