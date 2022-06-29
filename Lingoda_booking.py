@@ -20,10 +20,7 @@ driver = webdriver.Chrome(service=Service(
     ChromeDriverManager().install()), options=options)
 
 
-df = pd.read_excel("Lingoda_input.xls", dtype = str)
-
-driver = webdriver.Chrome(service=Service(
-    ChromeDriverManager().install()), options=options)
+df = pd.read_excel("Lingoda_input.xls", dtype=str)
 
 #function to click the cookies button
 
@@ -51,9 +48,10 @@ for i in range(len(df)):
     user_language = df["Language"].iloc[i]
     user_level = df["Level"].iloc[i]
 
-    
     # loop untill the elements for registration are present
     while True:
+        driver = webdriver.Chrome(service=Service(
+            ChromeDriverManager().install()), options=options)
         url = "https://www.lingoda.com/en/"
         driver.get(url)
 
@@ -106,6 +104,7 @@ for i in range(len(df)):
                     (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div/div/div/div[4]/button')))
                 later.click()
             except TimeoutException:
+                driver.close()
                 continue
             break
 
@@ -137,6 +136,7 @@ for i in range(len(df)):
                     (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[2]/button[1]')))
                 class_type.click()
             except TimeoutException:
+                driver.close()
                 continue
             break
     # free trial error button
@@ -149,7 +149,6 @@ for i in range(len(df)):
             (By.XPATH, '//*[@id="no-cashback"]/div[2]/div/div/div[1]/div[2]/div[4]/a[2]')))
         free_trial.click()
 
- 
     signup_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[2]/div/div[2]/div/div[3]/button')))
     signup_btn.click()
@@ -188,7 +187,7 @@ for i in range(len(df)):
     driver.switch_to.default_content()
     driver.find_element(By.NAME, 'termsAndConditions').click()
 
-     #start free trial
+    #start free trial
     try:
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
             (By.CSS_SELECTOR, '#root > div.MuiBox-root.css-1obf64m > div.MuiBox-root.css-ab8yd1 > div.MuiBox-root.css-b95f0i > div.MuiBox-root.css-14d5zh9 > div > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-7.sc-bdvvtL.dNcRQs.css-1u92e3e > div > div > form > div > div.MuiBox-root.css-14x72jt > div > div > button > div'))).click()
@@ -248,3 +247,5 @@ for i in range(len(df)):
     except TimeoutException:
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
             (By.CSS_SELECTOR, 'body > div:nth-child(37) > div.MuiDialog-container.MuiDialog-scrollPaper.css-ekeie0 > div > div.MuiBox-root.css-1lnk26a > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-sm-auto.sc-bdvvtL.llWXcJ.css-110lzp > button'))).click()
+
+    driver.close()

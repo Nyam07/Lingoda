@@ -22,9 +22,6 @@ driver = webdriver.Chrome(service=Service(
 
 df = pd.read_excel("Lingoda_input.xls", dtype=str)
 
-driver = webdriver.Chrome(service=Service(
-    ChromeDriverManager().install()), options=options)
-
 #function to click the cookies button
 
 
@@ -53,6 +50,8 @@ for i in range(len(df)):
 
     # loop untill the elements for registration are present
     while True:
+        driver = webdriver.Chrome(service=Service(
+                ChromeDriverManager().install()), options=options)
         url = "https://www.lingoda.com/en/"
         driver.get(url)
 
@@ -105,6 +104,7 @@ for i in range(len(df)):
                     (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div/div/div/div[4]/button')))
                 later.click()
             except TimeoutException:
+                driver.close()
                 continue
             break
 
@@ -136,6 +136,7 @@ for i in range(len(df)):
                     (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[2]/button[1]')))
                 class_type.click()
             except TimeoutException:
+                driver.close()
                 continue
             break
     # free trial error button
@@ -212,3 +213,5 @@ for i in range(len(df)):
     #click_cookies()
     WebDriverWait(driver, 20).until(EC.presence_of_element_located(
         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[3]/button'))).click()
+
+    driver.close()
