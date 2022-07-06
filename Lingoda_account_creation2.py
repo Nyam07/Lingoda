@@ -8,19 +8,30 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 import pandas as pd
-import time
+import datetime
+import calendar
 
 
 # stop warnings
 options = webdriver.ChromeOptions()
 #options.add_experimental_option('excludeSwitches', ['enable-logging'])
-driver = webdriver.Chrome(service=Service(
-    ChromeDriverManager().install()), options=options)
+
+
+# read the csv file
 df = pd.read_excel("Lingoda_input.xls", dtype=str)
 
+#function to click the cookies button
+def click_cookies():
+    #accept terms an conditions
+    try:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            (By.XPATH, '//*[@id="onetrust-accept-btn-handler"]'))).click()
+    except TimeoutException:
+        pass
+
+#loop though the excel file
 for i in range(len(df)):
     fname = df['First Name'].iloc[i]
     lname = df['Last Name'].iloc[i]
@@ -35,6 +46,16 @@ for i in range(len(df)):
     user_language = df["Language"].iloc[i]
     user_level = df["Level"].iloc[i]
 
+    date_of_course= "2022/"+date_of_course
+    course_date = datetime.datetime.strptime(date_of_course, '%Y/%m/%d')
+    course_month = calendar.month_name[course_date.month]
+    course_day = str(course_date.day)
+    course_month
+
+
+    #START BROWSER
+    driver = webdriver.Chrome(service=Service(
+        ChromeDriverManager().install()), options=options)
 
     # loop untill the elements for registration are present
     while True:
@@ -45,14 +66,9 @@ for i in range(len(df)):
             driver.get(url)
             try:
                 #page2
+                click_cookies()
 
-                #accept terms an conditions
-                try:
-                    WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                        (By.XPATH, '//*[@id="onetrust-accept-btn-handler"]'))).click()
-                except TimeoutException:
-                    pass
-
+                #select the language level
                 if user_level == "A1":
                     level = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div/div[2]/button[1]')))
@@ -70,6 +86,7 @@ for i in range(len(df)):
                         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div/div[2]/button[5]')))
                 level.click()
 
+                #select the class type
                 class_type = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                     (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[2]/button[1]')))
                 class_type.click()
@@ -86,6 +103,9 @@ for i in range(len(df)):
                 url = "https://learn.lingoda.com/en/get-started/level?sectionSlug=business-english"
                 driver.get(url)
 
+                click_cookies()
+
+                #SELECT THE USER LEVEL
                 if user_level == "A1":
                     level = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div/div[2]/button[1]')))
@@ -97,14 +117,19 @@ for i in range(len(df)):
                         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div/div[2]/button[3]')))
 
                 level.click()
+
+                #SELECT THE CLASS TYPE
                 class_type = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                     (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[2]/button[1]')))
                 class_type.click()
             except TimeoutException:
                 continue
             break
-        
-    # free trial error button
+        else:
+            print("Please select either English or Business English")
+            continue
+
+    # CLICK THE FREE TRIAL BUTTON
     try:
         free_trial = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
             (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div[2]/div[1]/div/div/div[5]/button')))
@@ -114,11 +139,12 @@ for i in range(len(df)):
             (By.XPATH, '//*[@id="no-cashback"]/div[2]/div/div/div[1]/div[2]/div[4]/a[2]')))
         free_trial.click()
 
+    # CLICK THE SIGNUP BUTTON
     signup_btn = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[2]/div/div[2]/div/div[3]/button')))
     signup_btn.click()
 
-    #enter details
+    # ENTER PERSONAL DETAILS
     WebDriverWait(driver, 10).until(EC.presence_of_element_located(
         (By.NAME, 'firstName'))).send_keys(fname)
     WebDriverWait(driver, 10).until(EC.presence_of_element_located(
@@ -128,7 +154,7 @@ for i in range(len(df)):
     WebDriverWait(driver, 10).until(EC.presence_of_element_located(
         (By.NAME, 'password'))).send_keys(user_password)
 
-    #SIGNUP_BTN
+    # CLICK SIGNUP_BTN
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((
         By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[2]/div/div[2]/div/div[3]/div/form/div/div[5]/button'))).click()
 
@@ -140,7 +166,7 @@ for i in range(len(df)):
         print('Email already used!!!')
         continue
 
-    #fill credit card details
+    # FILL CREDIT CARD DETAILS
     WebDriverWait(driver, 10).until(EC.presence_of_element_located(
         (By.XPATH, '//*[@id="root"]/form/div/div[2]/span[1]/span[2]/div/div[2]/span/input'))).send_keys(card_no)
     WebDriverWait(driver, 10).until(EC.presence_of_element_located(
@@ -148,13 +174,13 @@ for i in range(len(df)):
     WebDriverWait(driver, 10).until(EC.presence_of_element_located(
         (By.XPATH, '//*[@id="root"]/form/div/div[2]/span[3]/span/span/input'))).send_keys(cvc)
 
-    # switch to main frame and accept terms and conditions
+    # SWITCH TO MAIN FRAME AND ACCEPT TERMS AND CONDITIONS
     driver.switch_to.default_content()
     driver.find_element(By.NAME, 'termsAndConditions').click()
 
-    #start free trial
+    # CLICK THE START FREE TRIAL BUTTON
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-        (By.XPATH, '// *[@id="root"]/div[1]/div[1]/main/div[2]/div/div/div[1]/div/div/form/div/div[3]/div/div/button'))).click()
+        (By.XPATH, '//*[@id="root"]/div/div[1]/div[4]/div[2]/div/div/div/div[1]/div/div/form/div/div[3]/div/div/button'))).click()
 
     #CONTINUE BUTTON
     try:
@@ -171,3 +197,5 @@ for i in range(len(df)):
     # done button
     WebDriverWait(driver, 20).until(EC.presence_of_element_located(
         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[3]/button'))).click()
+
+    driver.close()

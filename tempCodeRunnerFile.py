@@ -1,0 +1,1 @@
+="root"]/div/div[1]/main/div[2]/div/div[3]/button'))).click()
