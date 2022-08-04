@@ -16,7 +16,7 @@ import calendar
 
 # stop warnings
 options = webdriver.ChromeOptions()
-#options.add_experimental_option('excludeSwitches', ['enable-logging'])
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
 
 # read the csv file
@@ -132,7 +132,7 @@ for i in range(len(df)):
     # CLICK THE FREE TRIAL BUTTON
     try:
         free_trial = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-            (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div[2]/div[1]/div/div/div[5]/button')))
+            (By.CSS_SELECTOR, '#root > div > div.MuiBox-root.css-dmmwmi > main > div.MuiBox-root.css-dvxtzn > div.MuiGrid-root.sc-bdvvtL.css-dwbo9d > div > div:nth-child(1) > div > div > div:nth-child(5) > button')))
         free_trial.click()
     except TimeoutException:
         free_trial = WebDriverWait(driver, 10).until(EC.presence_of_element_located(
