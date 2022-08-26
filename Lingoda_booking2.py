@@ -188,7 +188,7 @@ for i in range(len(df)):
             (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div/button'))).click()
     except TimeoutException:
         print('Credit card error!! .Please check that you entered the correct details and that the card has some funds.')
-        break
+        continue
 
     #other
     WebDriverWait(driver, 20).until(EC.presence_of_element_located(
@@ -204,7 +204,7 @@ for i in range(len(df)):
 
         # BOOK CUSTOMIZED PRIVATE CLASS
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-        (By.XPATH, '//*[@id="sidebar"]/div/div/div[2]/div[2]/div/a'))).click()
+        (By.CSS_SELECTOR, '#sidebar > div > div > div.MuiBox-root.css-1ugeyud > div.MuiBox-root.css-1i7feli > div > button'))).click()
 
     # instructor notes
     WebDriverWait(driver, 10).until(EC.presence_of_element_located(
@@ -249,5 +249,3 @@ for i in range(len(df)):
     #CONFIRM CLASS
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
         (By.XPATH, '/html/body/div[9]/div[3]/div/div[3]/div/div[1]/button'))).click()
-
-    driver.close()

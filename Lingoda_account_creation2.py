@@ -197,5 +197,3 @@ for i in range(len(df)):
     # done button
     WebDriverWait(driver, 20).until(EC.presence_of_element_located(
         (By.XPATH, '//*[@id="root"]/div/div[1]/main/div[2]/div/div[3]/button'))).click()
-
-    driver.close()
